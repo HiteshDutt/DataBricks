@@ -5,7 +5,7 @@ on:
     - main
     - dev
     paths:
-    - notebooks
+    - notebooks/**
 jobs:
   Build:
     name: Build Job
