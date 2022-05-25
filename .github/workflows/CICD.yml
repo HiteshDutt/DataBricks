@@ -7,6 +7,7 @@ on:
 env:
   devBranch: refs/heads/dev
   prodBranch: refs/heads/main
+  
 jobs:
   Build:
     name: Build Job
@@ -25,7 +26,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Dev
-    if: ${{ github.ref == env.devBranch }}
+    if: ${{ env.DAY_OF_WEEK == github.ref }}
     steps:
     - 
       run: |
@@ -35,7 +36,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Prod
-    if: ${{ github.ref == env.prodBranch }}
+    if: ${{ env.DAY_OF_WEEK == github.ref }}
     steps:
     - 
       run: |
