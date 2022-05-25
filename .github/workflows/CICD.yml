@@ -25,7 +25,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Dev
-    if: (github.ref == '${{ env.variables.dev  }}')
+    if: (github.ref == 'refs/heads/dev')
     steps:
     - 
       run: |
@@ -35,7 +35,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Prod
-    if: (github.ref == '${{ env.variables.prod  }}')
+    if: (github.ref == 'refs/heads/main')
     steps:
     - 
       run: |
