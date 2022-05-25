@@ -22,7 +22,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Dev
-    if: (github.ref == '${{ secrets.BRANCH_NAME }}')
+    if: ${{ secrets.BRANCH_NAME == github.ref }}
     steps:
     - 
       run: |
@@ -32,7 +32,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Prod
-    if: (github.ref == '${{ secrets.BRANCH_NAME }}')
+    if: ${{ secrets.BRANCH_NAME == github.ref }}
     steps:
     - 
       run: |
