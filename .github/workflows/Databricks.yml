@@ -5,10 +5,6 @@ on:
     branches:
     - main
     - dev
-    
-env:
-  DEV_BRANCH: refs/heads/dev
-  PROD_BRANCH: refs/heads/main
   
 jobs:
   Build:
@@ -34,13 +30,9 @@ jobs:
     - name: Upload Databricks
       uses: microsoft/databricks-import-notebook@v1.0.0
       with:
-        # Databricks host
         databricks-host: $DATABRICKSHOST
-        # Databricks token
         databricks-token: $TOKEN
-        # LOCAL_NOTEBOOKS_PATH
         local-path: ./
-        # REMOTE_NOTEBOOK_PATH
         remote-path: $REMOTEPATH
   DeployProd:
     needs: [DeployDev]
@@ -53,12 +45,8 @@ jobs:
       uses: microsoft/install-databricks-cli@v1.0.0
     - name: Upload Databricks
       uses: microsoft/databricks-import-notebook@v1.0.0
-      with:
-        # Databricks host
+      with:        
         databricks-host: $DATABRICKSHOST
-        # Databricks token
         databricks-token: $TOKEN
-        # LOCAL_NOTEBOOKS_PATH
         local-path: ./
-        # REMOTE_NOTEBOOK_PATH
         remote-path: $REMOTEPATH
