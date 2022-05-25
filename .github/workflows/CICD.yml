@@ -5,8 +5,8 @@ on:
     - main
     - dev
 env:
-  dev: refs/heads/dev
-  prod: refs/heads/main
+  devBranch: refs/heads/dev
+  prodBranch: refs/heads/main
 jobs:
   Build:
     name: Build Job
@@ -25,7 +25,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Dev
-    if: (github.ref == 'refs/heads/dev')
+    if: (github.ref == '$devBranch')
     steps:
     - 
       run: |
@@ -35,7 +35,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Prod
-    if: (github.ref == 'refs/heads/main')
+    if: (github.ref == '$prodBranch')
     steps:
     - 
       run: |
