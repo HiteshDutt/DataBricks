@@ -3,6 +3,7 @@ on:
   push:
     branches:
     - main
+    - dev
     paths:
     - notebooks
 jobs:
@@ -17,3 +18,22 @@ jobs:
       with:
         path: ${{ github.workspace }}/notebooks/Shared/
         name: drop
+  DeployDev:
+    name: DEV Deployment
+    runs-on: windows-latest
+    environment:
+      name: Dev
+    steps:
+    - 
+      run: |
+        echo "Dev Deployment"
+  DeployProd:
+    name: Prod Deployment
+    runs-on: windows-latest
+    environment:
+      name: Prod
+    steps:
+    - 
+      run: |
+        echo "Prod Deployment"
+  
