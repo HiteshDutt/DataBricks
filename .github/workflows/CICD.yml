@@ -22,6 +22,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Dev
+    if: (github.ref == ${{secrets.BRANCH_NAME}})
     steps:
     - 
       run: |
@@ -31,8 +32,8 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Prod
+    if: (github.ref == ${{secrets.BRANCH_NAME}})
     steps:
     - 
       run: |
         echo "Prod Deployment"
-  
