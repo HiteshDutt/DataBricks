@@ -25,7 +25,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Dev
-    if: (github.ref == '$devBranch')
+    if: (github.ref == $devBranch)
     steps:
     - 
       run: |
@@ -35,7 +35,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Prod
-    if: (github.ref == '$prodBranch')
+    if: (github.ref == $prodBranch)
     steps:
     - 
       run: |
