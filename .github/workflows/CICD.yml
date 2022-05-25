@@ -27,12 +27,19 @@ jobs:
     name: DEV Deployment
     runs-on: windows-latest
     environment:
-      name: Dev   
+      name: Dev  
     steps:
-    - name: Dev Steps
-      if: (github.ref == '${{ env.DEV_BRANCH  }}')
-      run: |
-        echo "Dev Deployment"
+    - name: Prod Steps
+      uses: microsoft/databricks-import-notebook@v1.0.0
+      with:
+        # Databricks host
+        databricks-host: $DATABRICKSHOST
+        # Databricks token
+        databricks-token: $TOKEN
+        # LOCAL_NOTEBOOKS_PATH
+        local-path: ./
+        # REMOTE_NOTEBOOK_PATH
+        remote-path: $REMOTEPATH
   DeployProd:
     needs: [DeployDev]
     name: Prod Deployment
@@ -41,6 +48,13 @@ jobs:
       name: Prod  
     steps:
     - name: Prod Steps
-      if: (github.ref == '${{ env.PROD_BRANCH  }}')
-      run: |
-        echo "PROD Deployment"
+      uses: microsoft/databricks-import-notebook@v1.0.0
+      with:
+        # Databricks host
+        databricks-host: $DATABRICKSHOST
+        # Databricks token
+        databricks-token: $TOKEN
+        # LOCAL_NOTEBOOKS_PATH
+        local-path: ./
+        # REMOTE_NOTEBOOK_PATH
+        remote-path: $REMOTEPATH
