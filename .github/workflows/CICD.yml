@@ -27,19 +27,20 @@ jobs:
     name: DEV Deployment
     runs-on: windows-latest
     environment:
-      name: Dev
-    if: (github.ref == '${{ env.DEV_BRANCH  }}')
+      name: Dev   
     steps:
-    - 
+    - name: Dev Steps
+      if: (github.ref == '${{ env.DEV_BRANCH  }}')
       run: |
         echo "Dev Deployment"
   DeployProd:
+    needs: [DeployDev]
     name: Prod Deployment
     runs-on: windows-latest
     environment:
-      name: Prod
-    if: (github.ref == '${{ env.PROD_BRANCH  }}')
+      name: Prod  
     steps:
-    - 
+    - name: Prod Steps
+      if: (github.ref == '${{ env.PROD_BRANCH  }}')
       run: |
-        echo "Prod Deployment"
+        echo "PROD Deployment"
