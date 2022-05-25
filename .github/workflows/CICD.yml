@@ -17,6 +17,7 @@ jobs:
         path: ${{ github.workspace }}/notebooks/Shared/
         name: drop
   DeployDev:
+    needs: [Build]
     name: DEV Deployment
     runs-on: windows-latest
     environment:
