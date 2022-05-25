@@ -4,6 +4,9 @@ on:
     branches:
     - main
     - dev
+env:
+  dev: refs/heads/dev
+  prod: refs/heads/main
 jobs:
   Build:
     name: Build Job
@@ -22,7 +25,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Dev
-    if: ${{ secrets.BRANCH_NAME == github.ref }}
+    if: (github.ref == '${{ env.variables.dev  }}')
     steps:
     - 
       run: |
@@ -32,7 +35,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: Prod
-    if: ${{ secrets.BRANCH_NAME == github.ref }}
+    if: (github.ref == '${{ env.variables.prod  }}')
     steps:
     - 
       run: |
