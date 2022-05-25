@@ -1,2 +1,2 @@
 --something relavant
-select * from everywhere where country like 'India'
+select * from everywhere where country like 'India%'
