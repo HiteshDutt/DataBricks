@@ -1,4 +1,4 @@
-name: Data Bricks CI CD
+name: Data Bricks
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
         local-path: ./
         remote-path: $REMOTEPATH
   DeployProd:
-    needs: [DeployDev]
+    needs: [Build]
     name: Prod Deployment
     runs-on: windows-latest
     environment:
