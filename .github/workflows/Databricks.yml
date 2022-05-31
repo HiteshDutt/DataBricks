@@ -23,7 +23,8 @@ jobs:
     name: DEV Deployment
     runs-on: windows-latest
     environment:
-      name: Dev  
+      name: Dev
+    if: (github.ref ==  'refs/heads/dev') #please update the branch name here, variables in env are not accessible here
     steps:
     - name: install Databrick CLI
       uses: microsoft/install-databricks-cli@v1.0.0
@@ -39,13 +40,14 @@ jobs:
     name: Prod Deployment
     runs-on: windows-latest
     environment:
-      name: Prod  
+      name: Prod
+    if: (github.ref ==  'refs/heads/main') #please update the branch name here, variables in env are not accessible here  
     steps:
     - name: install Databrick CLI
       uses: microsoft/install-databricks-cli@v1.0.0
     - name: Upload Databricks
       uses: microsoft/databricks-import-notebook@v1.0.0
-      with:        
+      with:
         databricks-host: $DATABRICKSHOST
         databricks-token: $TOKEN
         local-path: ./
