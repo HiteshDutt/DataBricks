@@ -37,7 +37,7 @@ jobs:
           databricks-host: ${{ secrets.DATABRICKSHOST }}
           databricks-token: ${{ secrets.TOKEN }}
           local-path: ./notebooks
-          remote-path: /import-notebook
+          remote-path: import-notebook
   DeployProd:
     needs: [Build]
     name: Prod Deployment
@@ -57,4 +57,4 @@ jobs:
           databricks-host: ${{ secrets.DATABRICKSHOST }}
           databricks-token: ${{ secrets.TOKEN }}
           local-path: ./notebooks
-          remote-path: /import-notebook
+          remote-path: import-notebook
