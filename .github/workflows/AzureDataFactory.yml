@@ -1,52 +1,35 @@
-name: Data Factory
+name: Azure Data Factory
+
 on:
   push:
     branches:
     - dev
     - main
+
 env:
-  timeOutInMinutesVariable: 4320
   folderwithpackagedotjsonfile: ADFIntegration/DevOpsFiles
-  devsubscription: xxx-xxxx-xxxx
-  DevServiceconnection: xxxxxxxx
-  devresourceGroup: xxxx
-  devdataFactory: adf-dev
-  devlocation: xxxx
-  Testsubscription: xxx-xxxx-xxxx
-  TestServiceconnection: xxxxxxxx
-  TestresourceGroup: xxxx
-  TestdataFactory: adf-test
-  Testlocation: xxxx
-  Accsubscription: xxx-xxxx-xxxx
-  AccServiceconnection: xxxxxxxx
-  AccresourceGroup: xxxx
-  AccdataFactory: adf-acc
-  Acclocation: xxxx
-  Prodsubscription: xxx-xxxx-xxxx
-  ProdServiceconnection: xxxxxxxx
-  ProdresourceGroup: xxxx
-  ProddataFactory: adf-prod
-  Prodlocation: xxxx
-  devBranchName: refs/heads/develop
-  testBranchName: refs/heads/test
-  acceptanceBranchName: refs/heads/acceptance
-  productionBranchName: refs/heads/main
+  subscription: d33e1d84-2e9a-471b-be9c-560633380015
+  resourceGroup: ADF
+  dataFactory: adfgithubactions
+
 jobs:
   Build:
-    name: Build Azure data Factory
+    name: Build Stage
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      name: Checkout
     - name: Install Node.js
       uses: actions/setup-node@v1
       with:
         node-version: 10.x
     - name: Install npm package
-      run: npm install ${{ github.workspace }}/$folderwithpackagedotjsonfile
+      run: npm install ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }} 
     - name: Validate
-      run: npm run build validate ${{ github.workspace }}/ADFIntegration /subscriptions/$devsubscription/resourceGroups/$devresourceGroup/providers/Microsoft.DataFactory/factories/$devdataFactory ${{ github.workspace }}/$folderwithpackagedotjsonfile
+      run: npm run build validate ${{ github.workspace }}/ADFIntegration /subscriptions/${{ env.subscription  }}/resourceGroups/${{ env.resourceGroup  }}/providers/Microsoft.DataFactory/factories/${{ env.dataFactory  }} ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
     - name: Generate ARM template
-      run: npm run build export ${{ github.workspace }}/ADFIntegration /subscriptions/$devsubscription/resourceGroups/$devresourceGroup/providers/Microsoft.DataFactory/factories/$devdataFactory "ArmTemplates" ${{ github.workspace }}/$folderwithpackagedotjsonfile
+      run: npm run build export ${{ github.workspace }}/ADFIntegration /subscriptions/${{ env.subscription  }}/resourceGroups/${{ env.resourceGroup  }}/providers/Microsoft.DataFactory/factories/${{ env.dataFactory  }} "ArmTemplates" ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
     - uses: actions/upload-artifact@v2
       with:
         path: ${{ github.workspace }}/ADFIntegration/DevOpsFiles/ArmTemplates
+    
