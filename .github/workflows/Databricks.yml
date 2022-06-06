@@ -9,7 +9,7 @@ on:
 jobs:
   Build:
     name: Build Job
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2.4.2
@@ -21,7 +21,7 @@ jobs:
   DeployDev:
     needs: [Build]
     name: DEV Deployment
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     environment:
       name: Dev
     if: (github.ref ==  'refs/heads/dev') #please update the branch name here, variables in env are not accessible here
@@ -41,7 +41,7 @@ jobs:
   DeployProd:
     needs: [Build]
     name: Prod Deployment
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     environment:
       name: Prod
     if: (github.ref ==  'refs/heads/main') #please update the branch name here, variables in env are not accessible here  
