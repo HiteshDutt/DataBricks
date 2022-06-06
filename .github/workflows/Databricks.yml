@@ -36,8 +36,8 @@ jobs:
         with:
           databricks-host: ${{ secrets.DATABRICKSHOST }}
           databricks-token: ${{ secrets.TOKEN }}
-          local-path: ./notebooks
-          remote-path: /
+          local-path: ./notebooks/shared
+          remote-path: /shared
   DeployProd:
     needs: [Build]
     name: Prod Deployment
@@ -56,5 +56,5 @@ jobs:
         with:
           databricks-host: ${{ secrets.DATABRICKSHOST }}
           databricks-token: ${{ secrets.TOKEN }}
-          local-path: ./notebooks
-          remote-path: /
+          local-path: ./notebooks/shared
+          remote-path: /shared
