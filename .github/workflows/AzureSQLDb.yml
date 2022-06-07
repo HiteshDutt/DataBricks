@@ -25,8 +25,8 @@ jobs:
       run: msbuild '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj    ' /t:build /p:CmdLineInMemoryStorage=True
     - name: 'Copy Files to: ${{ github.workspace }}'
       run: Copy '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/bin/debug/' '${{ github.workspace }}'
-    - name: 'Copy Files to: ${{ github.workspace }} copy'
-      run: Copy '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/${{ env.projectName  }}.publish.xml' '${{ github.workspace }}'
+    # - name: 'Copy Files to: ${{ github.workspace }} copy'
+    #   run: Copy '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/${{ env.projectName  }}.publish.xml' '${{ github.workspace }}'
     - name: 'Publish Artifact: drop'
       uses: actions/upload-artifact@v2
       with:
