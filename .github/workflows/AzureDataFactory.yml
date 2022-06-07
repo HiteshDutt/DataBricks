@@ -61,10 +61,12 @@ jobs:
       - name: Stop trigger
         uses: azure/powershell@v1
         with:
-          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $true -deleteDeployment $false
+          inlineScript: |
+            Connect-AzAccount
+            ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $true -deleteDeployment $false
           azPSVersion: latest      
       - name: Run ARM deploy
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v1.0.8
         with:
           subscriptionId: ${{ secrets.SUBSCRIPTION }}
           resourceGroupName: ${{ secrets.RESOURCEGROUP }}
@@ -73,6 +75,48 @@ jobs:
       - name: Start triggers
         uses: azure/powershell@v1
         with:
-          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $false -deleteDeployment $false
+          inlineScript: |
+            Connect-AzAccount
+            ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $false -deleteDeployment $false
+          azPSVersion: latest
+  DeployProd:
+      needs: [Build]
+      name: Dev Deploy
+      runs-on: ubuntu-latest
+      environment:
+        name: Prod
+      if: (github.ref ==  'refs/heads/main') #please update the branch name here, variables in env are not accessible here
+      steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZ_SPN }}
+      - name: 'Download Pipeline Artifact: drop'
+        uses: actions/download-artifact@v2
+        with:
+          name: ArmTemplates
+          path: ArmTemplates
+      - name: Stop trigger
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            Connect-AzAccount
+            ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $true -deleteDeployment $false
+          azPSVersion: latest      
+      - name: Run ARM deploy
+        uses: azure/arm-deploy@v1.0.8
+        with:
+          subscriptionId: ${{ secrets.SUBSCRIPTION }}
+          resourceGroupName: ${{ secrets.RESOURCEGROUP }}
+          template: ./ArmTemplates/ARMTemplateForFactory.json
+          parameters: ./ArmTemplates/ARMTemplateParametersDev.json
+      - name: Start triggers
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            Connect-AzAccount
+            ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $false -deleteDeployment $false
           azPSVersion: latest
     
