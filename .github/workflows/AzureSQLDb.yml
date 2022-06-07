@@ -11,6 +11,7 @@ on:
 
 env:
   projectName: TestDb
+  buildLocation: ${{ github.workspace }}\build
   
 jobs:
   Build:
@@ -24,11 +25,7 @@ jobs:
     - name: setup-msbuild
       uses: microsoft/setup-msbuild@v1.1
     - name: Build solution SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj
-      run: msbuild '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj    ' /t:build /p:CmdLineInMemoryStorage=True /p:OutputPath=${{ github.workspace }}\build
-    - name: List Files
-      run: |
-        cd ${{ github.workspace }}\build
-        dir
+      run: msbuild '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj    ' /t:build /p:CmdLineInMemoryStorage=True /p:OutputPath=${{ env.buildLocation }}
     # - name: 'Copy Files to: ${{ github.workspace }}'
     #   run: Copy '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/bin/debug/' '${{ github.workspace }}/build'
     # - name: 'Copy Files to: ${{ github.workspace }} copy'
@@ -36,6 +33,43 @@ jobs:
     - name: 'Publish Artifact: drop'
       uses: actions/upload-artifact@v2
       with:
-        name: SqlProject
-        path: ${{ github.workspace }}/build
-    
+        name: ${{ env.projectName }}
+        path: ${{ env.buildLocation }}
+
+  DeployDev:
+    needs: [Build]
+    name: Dev Deploy
+    runs-on: windows-latest 
+    environment:
+      name: Dev 
+    if: (github.ref ==  'refs/heads/dev')
+    steps:
+      - name: 'Download Artifact'
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.projectName }}
+          path: ${{ env.projectName }}
+      - name: Apply Dacpac
+        uses: azure/sql-action@v1.3
+        with:
+          connection-string: ${{ secrets.SQLCONNECTIONSTRING }}
+          dacpac-package: ${{ env.projectName }}/${{ env.projectName }}.dacpac
+
+  DeployProd:
+    needs: [Build]
+    name: Prod Deploy
+    runs-on: windows-latest 
+    environment:
+      name: Dev 
+    if: (github.ref ==  'refs/heads/main')
+    steps:
+      - name: 'Download Artifact'
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.projectName }}
+          path: ${{ env.projectName }}
+      - name: Apply Dacpac
+        uses: azure/sql-action@v1.3
+        with:
+          connection-string: ${{ secrets.SQLCONNECTIONSTRING }}
+          dacpac-package: ${{ env.projectName }}/${{ env.projectName }}.dacpac
