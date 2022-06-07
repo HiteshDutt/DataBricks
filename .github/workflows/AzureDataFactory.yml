@@ -38,4 +38,39 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         path: ${{ github.workspace }}/ADFIntegration/DevOpsFiles/ArmTemplates
+  DeployDev:
+      name: Dev Deplou
+      runs-on: ubuntu-latest
+      environment:
+        name: Dev
+      if: (github.ref ==  'refs/heads/dev') #please update the branch name here, variables in env are not accessible here
+      steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZ_SPN }}
+      - name: 'Download Pipeline Artifact: drop'
+        uses: actions/download-artifact@v2
+        with:
+          name: ArmTemplates
+          path: ArmTemplates
+      - name: Stop trigger
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.ResourceGroup  }} -DataFactoryName ${{ secrets.DataFactory  }} -predeployment $true -deleteDeployment $false
+          azPSVersion: latest      
+      - name: Run ARM deploy
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          resourceGroupName: ${{ secrets.AZURE_RG }}
+          template: ./ArmTemplates/ARMTemplateForFactory.json
+          parameters: ./ArmTemplates/ARMTemplateParametersDev.json
+      - name: Start triggers
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.ResourceGroup  }} -DataFactoryName ${{ secrets.DataFactory  }} -predeployment $false -deleteDeployment $false
+          azPSVersion: latest
     
