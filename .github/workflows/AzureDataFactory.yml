@@ -61,7 +61,7 @@ jobs:
       - name: Stop trigger
         uses: azure/powershell@v1
         with:
-          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $true -deleteDeployment $false
+          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $true -deleteDeployment $false
           azPSVersion: latest      
       - name: Run ARM deploy
         uses: azure/arm-deploy@v1
@@ -73,6 +73,6 @@ jobs:
       - name: Start triggers
         uses: azure/powershell@v1
         with:
-          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $false -deleteDeployment $false
+          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $false -deleteDeployment $false
           azPSVersion: latest
     
