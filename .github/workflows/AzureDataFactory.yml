@@ -11,9 +11,6 @@ on:
 
 env:
   folderwithpackagedotjsonfile: ADFIntegration/DevOpsFiles
-  subscription: d33e1d84-2e9a-471b-be9c-560633380015
-  resourceGroup: ADF
-  dataFactory: adfgithubactions
 
 jobs:
   Build:
@@ -31,10 +28,10 @@ jobs:
       run: npm install
     - name: Validate
       working-directory: ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }} 
-      run: npm run build validate ${{ github.workspace }}/ADFIntegration /subscriptions/${{ env.subscription  }}/resourceGroups/${{ env.resourceGroup  }}/providers/Microsoft.DataFactory/factories/${{ env.dataFactory  }} ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
+      run: npm run build validate ${{ github.workspace }}/ADFIntegration /subscriptions/${{ secrets.SUBSCRIPTION  }}/resourceGroups/${{ secrets.RESOURCEGROUP  }}/providers/Microsoft.DataFactory/factories/${{ secrets.DATAFACTORY }} ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
     - name: Generate ARM template
       working-directory: ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }} 
-      run: npm run build export ${{ github.workspace }}/ADFIntegration /subscriptions/${{ env.subscription  }}/resourceGroups/${{ env.resourceGroup  }}/providers/Microsoft.DataFactory/factories/${{ env.dataFactory  }} "ArmTemplates" ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
+      run: npm run build export ${{ github.workspace }}/ADFIntegration /subscriptions/${{ secrets.SUBSCRIPTION  }}/resourceGroups/${{ secrets.RESOURCEGROUP  }}/providers/Microsoft.DataFactory/factories/${{ secrets.DATAFACTORY  }} "ArmTemplates" ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
     - uses: actions/upload-artifact@v2
       with:
         name: ArmTemplates
