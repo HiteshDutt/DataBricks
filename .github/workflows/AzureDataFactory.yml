@@ -2,6 +2,8 @@ name: Azure Data Factory
 
 on:
   push:
+    paths:
+      - 'ADFIntegration/**'
     branches:
     - dev
     - main
