@@ -1,0 +1,31 @@
+name: Azure Sql Db
+
+on:
+  push:
+    paths:
+      - 'SqlProject/**'
+      - '**/AzureSQLDb.yml'
+    branches:
+    - dev
+    - main
+
+env:
+  projectName: something
+  
+jobs:
+  Build:
+    name: Build Stage
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build solution SqlProject/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj
+      run: msbuild './SqlProject/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj    ' /t:build /p:CmdLineInMemoryStorage=True
+    - name: 'Copy Files to: ${{ github.workspace }}'
+      run: Copy './SqlProject/${{ env.projectName  }}/bin/debug/' '${{ github.workspace }}'
+    - name: 'Copy Files to: ${{ github.workspace }} copy'
+      run: Copy './SqlProject/${{ env.projectName  }}/${{ env.projectName  }}.publish.xml' '${{ github.workspace }}'
+    - name: 'Publish Artifact: drop'
+      uses: actions/upload-artifact@v2
+      with:
+        name: SqlProject
+    

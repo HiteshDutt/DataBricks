@@ -3,3 +3,14 @@ node_modules
 downloads
 package-lock.json
 ArmTemplates
+
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+*.vsidx
+.vs
