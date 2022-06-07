@@ -1,52 +1,113 @@
-name: Data Factory
+name: Azure Data Factory
+
 on:
   push:
+    paths:
+      - 'ADFIntegration/**'
+      - '**/AzureDataFactory.yml'
     branches:
     - dev
     - main
+
 env:
-  timeOutInMinutesVariable: 4320
   folderwithpackagedotjsonfile: ADFIntegration/DevOpsFiles
-  devsubscription: xxx-xxxx-xxxx
-  DevServiceconnection: xxxxxxxx
-  devresourceGroup: xxxx
-  devdataFactory: adf-dev
-  devlocation: xxxx
-  Testsubscription: xxx-xxxx-xxxx
-  TestServiceconnection: xxxxxxxx
-  TestresourceGroup: xxxx
-  TestdataFactory: adf-test
-  Testlocation: xxxx
-  Accsubscription: xxx-xxxx-xxxx
-  AccServiceconnection: xxxxxxxx
-  AccresourceGroup: xxxx
-  AccdataFactory: adf-acc
-  Acclocation: xxxx
-  Prodsubscription: xxx-xxxx-xxxx
-  ProdServiceconnection: xxxxxxxx
-  ProdresourceGroup: xxxx
-  ProddataFactory: adf-prod
-  Prodlocation: xxxx
-  devBranchName: refs/heads/develop
-  testBranchName: refs/heads/test
-  acceptanceBranchName: refs/heads/acceptance
-  productionBranchName: refs/heads/main
+
 jobs:
   Build:
-    name: Build Azure data Factory
+    name: Build Stage
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      name: Checkout
     - name: Install Node.js
       uses: actions/setup-node@v1
       with:
         node-version: 10.x
     - name: Install npm package
-      run: npm install ${{ github.workspace }}/$folderwithpackagedotjsonfile
+      working-directory: ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
+      run: npm install
     - name: Validate
-      run: npm run build validate ${{ github.workspace }}/ADFIntegration /subscriptions/$devsubscription/resourceGroups/$devresourceGroup/providers/Microsoft.DataFactory/factories/$devdataFactory ${{ github.workspace }}/$folderwithpackagedotjsonfile
+      working-directory: ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }} 
+      run: npm run build validate ${{ github.workspace }}/ADFIntegration /subscriptions/${{ secrets.SUBSCRIPTION  }}/resourceGroups/${{ secrets.RESOURCEGROUP  }}/providers/Microsoft.DataFactory/factories/${{ secrets.DATAFACTORY }} ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
     - name: Generate ARM template
-      run: npm run build export ${{ github.workspace }}/ADFIntegration /subscriptions/$devsubscription/resourceGroups/$devresourceGroup/providers/Microsoft.DataFactory/factories/$devdataFactory "ArmTemplates" ${{ github.workspace }}/$folderwithpackagedotjsonfile
+      working-directory: ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }} 
+      run: npm run build export ${{ github.workspace }}/ADFIntegration /subscriptions/${{ secrets.SUBSCRIPTION  }}/resourceGroups/${{ secrets.RESOURCEGROUP  }}/providers/Microsoft.DataFactory/factories/${{ secrets.DATAFACTORY  }} "ArmTemplates" ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
     - uses: actions/upload-artifact@v2
       with:
+        name: ArmTemplates
         path: ${{ github.workspace }}/ADFIntegration/DevOpsFiles/ArmTemplates
+  DeployDev:
+      needs: [Build]
+      name: Dev Deploy
+      runs-on: ubuntu-latest
+      environment:
+        name: Dev
+      if: (github.ref ==  'refs/heads/dev') #please update the branch name here, variables in env are not accessible here
+      steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZ_SPN }}
+          enable-AzPSSession: true
+      - name: 'Download Pipeline Artifact: drop'
+        uses: actions/download-artifact@v2
+        with:
+          name: ArmTemplates
+          path: ArmTemplates
+      - name: Stop trigger
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $true -deleteDeployment $false
+          azPSVersion: latest      
+      - name: Run ARM deploy
+        uses: azure/arm-deploy@v1.0.8
+        with:
+          subscriptionId: ${{ secrets.SUBSCRIPTION }}
+          resourceGroupName: ${{ secrets.RESOURCEGROUP }}
+          template: ./ArmTemplates/ARMTemplateForFactory.json
+          parameters: ./ArmTemplates/ARMTemplateParametersForFactory.json
+      - name: Start triggers
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $false -deleteDeployment $false
+          azPSVersion: latest
+  DeployProd:
+      needs: [Build]
+      name: Prod Deploy
+      runs-on: ubuntu-latest
+      environment:
+        name: Prod
+      if: (github.ref ==  'refs/heads/main') #please update the branch name here, variables in env are not accessible here
+      steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZ_SPN }}
+          enable-AzPSSession: true
+      - name: 'Download Pipeline Artifact: drop'
+        uses: actions/download-artifact@v2
+        with:
+          name: ArmTemplates
+          path: ArmTemplates
+      - name: Stop trigger
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $true -deleteDeployment $false
+          azPSVersion: latest      
+      - name: Run ARM deploy
+        uses: azure/arm-deploy@v1.0.8
+        with:
+          subscriptionId: ${{ secrets.SUBSCRIPTION }}
+          resourceGroupName: ${{ secrets.RESOURCEGROUP }}
+          template: ./ArmTemplates/ARMTemplateForFactory.json
+          parameters: ./ArmTemplates/ARMTemplateParametersForFactory.json
+      - name: Start triggers
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ./ArmTemplates/PrePostDeploymentScript.ps1 -armTemplate "./ArmTemplates/ARMTemplateForFactory.json" -ResourceGroupName ${{ secrets.RESOURCEGROUP  }} -DataFactoryName ${{ secrets.DATAFACTORY  }} -predeployment $false -deleteDeployment $false
+          azPSVersion: latest
+    
