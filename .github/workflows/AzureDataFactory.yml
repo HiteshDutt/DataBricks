@@ -37,6 +37,7 @@ jobs:
       run: npm run build export ${{ github.workspace }}/ADFIntegration /subscriptions/${{ env.subscription  }}/resourceGroups/${{ env.resourceGroup  }}/providers/Microsoft.DataFactory/factories/${{ env.dataFactory  }} "ArmTemplates" ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
     - uses: actions/upload-artifact@v2
       with:
+        name: ArmTemplates
         path: ${{ github.workspace }}/ADFIntegration/DevOpsFiles/ArmTemplates
   DeployDev:
       needs: [Build]
@@ -55,7 +56,7 @@ jobs:
       - name: 'Download Pipeline Artifact: drop'
         uses: actions/download-artifact@v2
         with:
-          name: Artifacts
+          name: ArmTemplates
           path: ArmTemplates
       - name: Stop trigger
         uses: azure/powershell@v1
