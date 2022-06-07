@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'notebooks/**'
+      - '**/Databricks.yml'
     branches:
     - main
     - dev

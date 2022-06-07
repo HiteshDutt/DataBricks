@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'ADFIntegration/**'
+      - '**/AzureDataFactory.yml'
     branches:
     - dev
     - main
