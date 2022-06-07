@@ -17,6 +17,8 @@ jobs:
     name: Build Stage
     runs-on: windows-latest
     steps:
+    - name: Create a build directory
+      run: mkdir ${{ github.workspace }}/build
     - name: Checkout
       uses: actions/checkout@v2
     - name: setup-msbuild
@@ -24,12 +26,12 @@ jobs:
     - name: Build solution SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj
       run: msbuild '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj    ' /t:build /p:CmdLineInMemoryStorage=True
     - name: 'Copy Files to: ${{ github.workspace }}'
-      run: Copy '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/bin/debug/' '${{ RUNNER_TEMP }}'
+      run: Copy '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/bin/debug/' '${{ github.workspace }}/build'
     # - name: 'Copy Files to: ${{ github.workspace }} copy'
     #   run: Copy '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}/${{ env.projectName  }}.publish.xml' '${{ github.workspace }}'
     - name: 'Publish Artifact: drop'
       uses: actions/upload-artifact@v2
       with:
         name: SqlProject
-        path: ${{ RUNNER_TEMP }}
+        path: ${{ github.workspace }}/build
     
