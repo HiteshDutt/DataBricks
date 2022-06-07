@@ -17,7 +17,10 @@ jobs:
     name: Build Stage
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1.1
     - name: Build solution SqlProject/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj
       run: msbuild './SqlProject/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj    ' /t:build /p:CmdLineInMemoryStorage=True
     - name: 'Copy Files to: ${{ github.workspace }}'
