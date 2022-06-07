@@ -22,11 +22,11 @@ jobs:
     - name: setup-msbuild
       uses: microsoft/setup-msbuild@v1.1
     - name: Build solution SqlProject/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj
-      run: msbuild './SqlProject/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj    ' /t:build /p:CmdLineInMemoryStorage=True
+      run: msbuild '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}.sqlproj    ' /t:build /p:CmdLineInMemoryStorage=True
     - name: 'Copy Files to: ${{ github.workspace }}'
-      run: Copy './SqlProject/${{ env.projectName  }}/bin/debug/' '${{ github.workspace }}'
+      run: Copy '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/bin/debug/' '${{ github.workspace }}'
     - name: 'Copy Files to: ${{ github.workspace }} copy'
-      run: Copy './SqlProject/${{ env.projectName  }}/${{ env.projectName  }}.publish.xml' '${{ github.workspace }}'
+      run: Copy '${{ github.workspace }}/SqlProject/${{ env.projectName  }}/${{ env.projectName  }}.publish.xml' '${{ github.workspace }}'
     - name: 'Publish Artifact: drop'
       uses: actions/upload-artifact@v2
       with:
