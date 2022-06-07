@@ -55,7 +55,7 @@ jobs:
       - name: 'Download Pipeline Artifact: drop'
         uses: actions/download-artifact@v2
         with:
-          name: ArmTemplates
+          name: Artifacts
           path: ArmTemplates
       - name: Stop trigger
         uses: azure/powershell@v1
