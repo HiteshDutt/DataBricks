@@ -39,7 +39,8 @@ jobs:
       with:
         path: ${{ github.workspace }}/ADFIntegration/DevOpsFiles/ArmTemplates
   DeployDev:
-      name: Dev Deplou
+      needs: [Build]
+      name: Dev Deploy
       runs-on: ubuntu-latest
       environment:
         name: Dev
