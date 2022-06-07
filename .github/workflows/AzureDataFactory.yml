@@ -24,7 +24,8 @@ jobs:
       with:
         node-version: 10.x
     - name: Install npm package
-      run: npm install ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }} 
+      working-directory: ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
+      run: npm install
     - name: Validate
       working-directory: ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }} 
       run: npm run build validate ${{ github.workspace }}/ADFIntegration /subscriptions/${{ env.subscription  }}/resourceGroups/${{ env.resourceGroup  }}/providers/Microsoft.DataFactory/factories/${{ env.dataFactory  }} ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
