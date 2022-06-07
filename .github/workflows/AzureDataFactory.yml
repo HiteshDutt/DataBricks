@@ -26,8 +26,10 @@ jobs:
     - name: Install npm package
       run: npm install ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }} 
     - name: Validate
+      working-directory: ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }} 
       run: npm run build validate ${{ github.workspace }}/ADFIntegration /subscriptions/${{ env.subscription  }}/resourceGroups/${{ env.resourceGroup  }}/providers/Microsoft.DataFactory/factories/${{ env.dataFactory  }} ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
     - name: Generate ARM template
+      working-directory: ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }} 
       run: npm run build export ${{ github.workspace }}/ADFIntegration /subscriptions/${{ env.subscription  }}/resourceGroups/${{ env.resourceGroup  }}/providers/Microsoft.DataFactory/factories/${{ env.dataFactory  }} "ArmTemplates" ${{ github.workspace }}/${{ env.folderwithpackagedotjsonfile  }}
     - uses: actions/upload-artifact@v2
       with:
