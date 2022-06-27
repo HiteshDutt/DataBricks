@@ -1,4 +1,4 @@
-name: .NET
+name: Logic Apps
 
 on:
   push:
