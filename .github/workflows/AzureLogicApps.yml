@@ -26,7 +26,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies #for dotnet
-      run: dotnet restore
+      run: dotnet restore ${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln
     - name: Build #for dotnet
       run: dotnet build ${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln -o ${{ env.buildLocation }} --no-restore
     #- name: setup-msbuild  # for msbuild
