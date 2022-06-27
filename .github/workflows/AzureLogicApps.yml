@@ -2,6 +2,12 @@ name: Logic Apps
 
 on:
   workflow_dispatch:
+    inputs:
+      skip-tests:
+        type: boolean
+        description: Skip tests
+        required: true
+        default: true
   push:
     paths:
       - 'LogicApps/**'
