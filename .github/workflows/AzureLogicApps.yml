@@ -1,11 +1,14 @@
 name: Logic Apps
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'LogicApps/**'
       - '**/AzureLogicApps.yml'
-    branches: [ "main" ]
+    branches: 
+    - dev
+    - main
 
 env:
   buildOutput: ${{ github.workspace }}/bin
