@@ -63,4 +63,30 @@ jobs:
           subscriptionId: ${{ secrets.SUBSCRIPTION }}
           resourceGroupName: ${{ secrets.RESOURCEGROUP }}
           template: ./logicappDrop/LogicApp.json
-          parameters: ./logicappDrop/LogicApp.parameters.json      
+          parameters: ./logicappDrop/LogicApp.parameters.json     
+  
+  DeployProd:
+    needs: [Build]
+    name: Dev Deploy
+    runs-on: windows-latest 
+    environment:
+      name: Prod 
+    if: (github.ref ==  'refs/heads/main')
+    steps:
+      - name: 'Download Artifact'
+        uses: actions/download-artifact@v2
+        with:
+          name: logicappDrop
+          path: logicappDrop
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZ_SPN }}
+          enable-AzPSSession: true #in case AzPSSession needs credentials 
+      - name: Run ARM deploy
+        uses: azure/arm-deploy@v1.0.8
+        with:
+          subscriptionId: ${{ secrets.SUBSCRIPTION }}
+          resourceGroupName: ${{ secrets.RESOURCEGROUP }}
+          template: ./logicappDrop/LogicApp.json
+          parameters: ./logicappDrop/LogicApp.parameters.json    
