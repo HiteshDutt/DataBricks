@@ -1,4 +1,4 @@
-name: Logic Apps
+name: Logic Apps 
 
 on:
   workflow_dispatch:
