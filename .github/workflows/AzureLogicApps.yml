@@ -28,11 +28,7 @@ jobs:
     - name: Restore dependencies #for dotnet
       run: dotnet restore ${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln
     - name: Build #for dotnet
-      run: dotnet build ${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln -o ${{ env.buildOutput }} --no-restore
-
-    - run: |
-        cd ${{ env.buildOutput }}
-        ls -a        
+      run: dotnet build ${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln -o ${{ env.buildOutput }} --no-restore       
     #- name: setup-msbuild  # for msbuild
     #  uses: microsoft/setup-msbuild@v1.1
     #- name: Build solution # for msbuild
@@ -60,7 +56,7 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZ_SPN }}
-          # enable-AzPSSession: true #in case AzPSSession needs credentials 
+          enable-AzPSSession: true #in case AzPSSession needs credentials 
       - name: Run ARM deploy
         uses: azure/arm-deploy@v1.0.8
         with:
