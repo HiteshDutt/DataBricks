@@ -14,3 +14,6 @@ ArmTemplates
 *.userprefs
 *.vsidx
 .vs
+
+bin
+obj

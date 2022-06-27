@@ -16,14 +16,23 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest 
+    runs-on: ubuntu-latest #if dotnet build is needed
+    #runs-on: windows-latest #if ms build is needed
 
     steps:
     - uses: actions/checkout@v3
-    - name: setup-msbuild 
-      uses: microsoft/setup-msbuild@v1.1
-    - name: Build solution 
-      run: msbuild '${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln    ' /t:build /p:CmdLineInMemoryStorage=True /p:OutputPath=${{ env.buildLocation }}
+    - name: Setup .NET  #for dotnet
+      uses: actions/setup-dotnet@v2.1.0
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies #for dotnet
+      run: dotnet restore
+    - name: Build #for dotnet
+      run: dotnet build ${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln -o ${{ env.buildLocation }} --no-restore
+    #- name: setup-msbuild  # for msbuild
+    #  uses: microsoft/setup-msbuild@v1.1
+    #- name: Build solution # for msbuild
+    #  run: msbuild '${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln    ' /t:build /p:CmdLineInMemoryStorage=True /p:OutputPath=${{ env.buildLocation }}
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3.1.0
       with:
