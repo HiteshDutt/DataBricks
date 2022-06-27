@@ -1,0 +1,62 @@
+name: .NET
+
+on:
+  push:
+    paths:
+      - 'LogicApps/**'
+      - '**/AzureLogicApps.yml'
+    branches: [ "main" ]
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Bump Version
+        default: v1.0.0
+        required: true
+
+env:
+  buildOutput: ${{ github.workspace }}/bin
+  projectName: "MyLogicApp"
+
+jobs:
+  build:
+    #runs-on: windows-latest #if ms build is needed
+    runs-on: ubuntu-latest #if dotnet build is needed
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: setup-msbuild #if ms build is needed
+      uses: microsoft/setup-msbuild@v1.1
+    - name: Build solution #if ms build is needed
+      run: msbuild '${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln    ' /t:build /p:CmdLineInMemoryStorage=True /p:OutputPath=${{ env.buildLocation }}
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        path: ${{ env.buildOutput }}
+        name: logicappDrop
+  
+  DeployDev:
+    needs: [Build]
+    name: Dev Deploy
+    runs-on: windows-latest 
+    environment:
+      name: Dev 
+    if: (github.ref ==  'refs/heads/dev')
+    steps:
+      - name: 'Download Artifact'
+        uses: actions/download-artifact@v2
+        with:
+          name: logicappDrop
+          path: logicappDrop
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZ_SPN }}
+          # enable-AzPSSession: true #in case AzPSSession needs credentials 
+      - name: Run ARM deploy
+        uses: azure/arm-deploy@v1.0.8
+        with:
+          subscriptionId: ${{ secrets.SUBSCRIPTION }}
+          resourceGroupName: ${{ secrets.RESOURCEGROUP }}
+          template: ./logicappDrop/LogicApp.json
+          parameters: ./logicappDrop/LogicApp.parameters.json      
