@@ -28,10 +28,10 @@ jobs:
     - name: Restore dependencies #for dotnet
       run: dotnet restore ${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln
     - name: Build #for dotnet
-      run: dotnet build ${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln -o ${{ env.buildLocation }}
+      run: dotnet build ${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln -o ${{ env.buildOutput }} --no-restore
 
     - run: |
-        cd ${{ env.buildLocation }}
+        cd ${{ env.buildOutput }}
         ls -a        
     #- name: setup-msbuild  # for msbuild
     #  uses: microsoft/setup-msbuild@v1.1
