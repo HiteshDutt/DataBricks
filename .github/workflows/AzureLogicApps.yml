@@ -16,14 +16,13 @@ env:
 
 jobs:
   build:
-    #runs-on: windows-latest #if ms build is needed
-    runs-on: ubuntu-latest #if dotnet build is needed
+    runs-on: windows-latest 
 
     steps:
     - uses: actions/checkout@v3
-    - name: setup-msbuild #if ms build is needed
+    - name: setup-msbuild 
       uses: microsoft/setup-msbuild@v1.1
-    - name: Build solution #if ms build is needed
+    - name: Build solution 
       run: msbuild '${{ github.workspace }}/LogicApps/${{ env.projectName  }}/${{ env.projectName  }}.sln    ' /t:build /p:CmdLineInMemoryStorage=True /p:OutputPath=${{ env.buildLocation }}
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3.1.0
