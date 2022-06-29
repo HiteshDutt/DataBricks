@@ -1,0 +1,16 @@
+name: Azure Analysis Services
+
+on:
+  push:
+    paths:
+      - 'AAS/**'
+      - '**/AzureAnalysisService.yml'
+    branches: 
+    - dev
+    - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    
